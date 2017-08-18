@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Peek!</title>
+<script src="angular.min.js"></script>
+<script src="angular-route.js"></script>
+<script src="animate.js"></script>
+</head>
+<body ng-app="myApp">
+
+	<div ng-view></div>
+
+</body>
+<script>
+
+var app = angular.module("myApp", ["ngRoute"]);
+app.config(function($routeProvider) {
+    $routeProvider
+    .when("/", {
+        templateUrl : "home.html",
+        controller : "homeCtrl"
+    })
+    .when("/play", {
+        templateUrl : "index.html",
+        controller : "playCtrl"
+    })
+    .when("/paris", {
+        templateUrl : "paris.htm",
+        controller : "parisCtrl"
+    });
+
+});
+
+app.controller("playCtrl", function ($rootScope, $scope, vidId) {
+   
+    var params = angular.fromJson(vidId.get());
+    var grabber = document.getElementById('grabber');
+    var id = params.id;
+    console.log($rootScope.vidid);
+    console.log($rootScope.vidid);
+    console.log($rootScope.vidid);
+
+    const YTPlayer = require('yt-player')
+    const player = new YTPlayer('#player')
+ 
+    player.load($rootScope.vidid);
+    player.setVolume(100)
+ 
+    player.on('playing', () => {
+      console.log(player.getDuration()) // => 351.521 
+    })
+});
+
+app.controller("parisCtrl", function ($scope) {
+    $scope.msg = "I love Paris";
+});
+
+app.controller("homeCtrl", function($rootScope,$scope, $location, vidId){
+
+    
+   
+	$scope.getVideo = function(){
+		$location.path("/play");
+		//alert('ouhghgh')
+	}
+    $scope.myFunction = function(event) {
+    if(event.keyCode == 13) {   // '13' is the key code for enter
+            var myurl = $scope.videourl;
+            var vidcode = myurl.split('=')[1];
+            //alert(vidcode);
+            vidId.set(vidcode)
+            console.log(vidId.get().id)
+            $rootScope.vidid = vidcode;
+            $location.path("/play");
+           
+            }
+        }
+    });
+
+app.service('vidId', function() {
+    var id;
+    
+   // var transaction; 
+    function set(id){
+        id = id;
+        
+    }
+
+    function get(){
+        return {"id": id}
+    }
+
+    return {
+        set: set,
+        get: get
+    }
+
+});
+   
+
+</script>
+</html>
